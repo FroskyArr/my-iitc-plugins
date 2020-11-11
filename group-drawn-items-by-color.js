@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           IITC plugin: Draw tools Enhancement
 // @category       Draw
-// @version        0.0.1
+// @version        0.0.2
 // @author         FroskyArr
 // @description    Can only group drawn items by color currently
 // @id             draw-tools-enhancement
@@ -25,7 +25,7 @@ if(typeof window.plugin !== 'function') window.plugin = function() {};
 // use own namespace for plugin
 window.plugin.drawToolsEnhancement = function() {};
 
-window.plugin.drawToolsEnhancement.optReadData = function() {
+window.plugin.drawToolsEnhancement.optAddAvaliableItems = function() {
   function groupByKey(xs, key) {
     let obj = {};
     for (const x of xs) {
@@ -41,7 +41,12 @@ window.plugin.drawToolsEnhancement.optReadData = function() {
     localStorage['plugin-draw-tools-layer']
     ? JSON.parse(localStorage['plugin-draw-tools-layer'])
     : [];
-  localStorage['plugin-draw-tools-enhancement'] = JSON.stringify(groupByKey(data, 'color'));
+  let olddata = 
+    localStorage['plugin-draw-tools-enhancement']
+    ? JSON.parse(localStorage['plugin-draw-tools-enhancement'])
+    : {};
+  localStorage['plugin-draw-tools-enhancement'] =
+    JSON.stringify( {...olddata, ...groupByKey(data, 'color')} );
   window.plugin.drawToolsEnhancement.useSpectrum();
 }
 
@@ -57,12 +62,22 @@ window.plugin.drawToolsEnhancement.optRestoreByColor = function(color) {
   window.plugin.drawToolsEnhancement.restoreWith(x => x[window.plugin.drawToolsEnhancement.currentColor]);
 }
 
+window.plugin.drawToolsEnhancement.optClearByColor = function(color) {
+  let data = JSON.parse(localStorage['plugin-draw-tools-enhancement']);
+  delete data[window.plugin.drawToolsEnhancement.currentColor];
+  localStorage['plugin-draw-tools-enhancement'] = JSON.stringify(data);
+}
+
 window.plugin.drawToolsEnhancement.optRestoreAll = function() {
   window.plugin.drawToolsEnhancement.restoreWith(x => Object.values(x).flat());
 }
 
-window.plugin.drawToolsEnhancement.currentColor = '#a24ac3';
+window.plugin.drawToolsEnhancement.optClearAll = function() {
+  localStorage['plugin-draw-tools-enhancement'] = '{}';
+}
 
+
+window.plugin.drawToolsEnhancement.currentColor = '#a24ac3';
 
 window.plugin.drawToolsEnhancement.useSpectrum = function() {
   const chunksBy = (xs, n) =>
@@ -80,7 +95,6 @@ window.plugin.drawToolsEnhancement.useSpectrum = function() {
     showSelectionPalette: false,
     palette: palette,
     change: function(color) { window.plugin.drawToolsEnhancement.currentColor = color.toHexString(); },
-//    move: function(color) { window.plugin.drawTools.setDrawColor(color.toHexString()); },
     color: window.plugin.drawToolsEnhancement.currentColor,
   });
 }
@@ -90,9 +104,11 @@ window.plugin.drawToolsEnhancement.manualOpt = function() {
            + '<input type="color" name="drawColor" id="drawtools_enhancement_color"></input>'
            + '</div>'
            + '<div class="drawtoolsSetbox">'
-           + '<a onclick="window.plugin.drawToolsEnhancement.optReadData();return false;" tabindex="0">Read Data</a>'
+           + '<a onclick="window.plugin.drawToolsEnhancement.optAddAvaliableItems();return false;" tabindex="0">Add Avaliable Items to Storage</a>'
            + '<a onclick="window.plugin.drawToolsEnhancement.optRestoreByColor();return false;" tabindex="0">Show By Color</a>'
-           + '<a onclick="window.plugin.drawToolsEnhancement.optRestoreAll();return false;" tabindex="0">Show All</a>'
+           + '<a onclick="window.plugin.drawToolsEnhancement.optClearByColor();return false;" tabindex="0">Clear By Color</a>'
+           + '<a onclick="window.plugin.drawToolsEnhancement.optRestoreAll();return false;" tabindex="0">Show All Stored Items</a>'
+           + '<a onclick="window.plugin.drawToolsEnhancement.optClearAll();return false;" tabindex="0">Clear All Stored Items</a>'
            + '</div>';
 
   dialog({
