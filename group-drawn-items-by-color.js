@@ -67,7 +67,7 @@ window.plugin.drawToolsEnhancement.currentColor = '#a24ac3';
 window.plugin.drawToolsEnhancement.useSpectrum = function() {
   const chunksBy = (xs, n) =>
     [...Array(Math.ceil(xs.length/n)).keys()]
-      .map(x => xs.splice(x*n, Math.min(x*n+n,xs.length)));
+      .map(x => xs.slice(x*n, Math.min(x*n+n,xs.length)));
 
   let colors = Object.keys(JSON.parse(localStorage['plugin-draw-tools-enhancement']));
   let palette = chunksBy(colors, 4)
