@@ -4,6 +4,9 @@ My home-brewed IITC plugin(s).
 ## group-drawn-items-by-color
 Usage:
 Toolbox -> DrawTools Enhancement Opt
-- Read Data: Read avaliable drawn items into storage.
-- Show By Color: Only show drawn items matching the color in the palette from the storage.
-- Show All: Show all avaliable items in the storage.
+- Add Avaliable Items To Storage: Read all features displaying and store them to the storage. New items will directly OVERWRITE the existing items which share the same color.
+- Show By Color / Show All: Read from storage and display
+- Hide By Color / Hide All: Remove from map but not from storage
+- Remove From Storage By Color / Remove All Stored Items: Remove from storage but not from map
+
+It is recommended to backup all your drawn items via DrawTools beforehand in order to prevent any data loss due to potential bugs XD.
